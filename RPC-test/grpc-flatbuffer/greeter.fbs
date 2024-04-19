@@ -1,0 +1,182 @@
+table FixedUUIDInfoFB
+{
+    low: ulong;
+    high: ulong;
+}
+
+table MirrorArgsFB
+{
+    copy: int;
+    ftt: int;
+}
+
+
+table ChunkOptionsFB
+{
+    ftt_type: int;
+    mirror: MirrorArgsFB;
+    placement: string;
+}
+
+table ReplicaLocationFB
+{
+    cs_location: string;
+    disk_location: int;
+    disk_type: uint;
+}
+
+table AccelerateOpenOptionsFB
+{
+    chunk_options: ChunkOptionsFB;
+    chunk_location: [ReplicaLocationFB];
+    chunk_sizeexponent: uint;
+    check_sumcategory: uint;
+}
+
+table IONiceFB
+{
+    priority: int;
+    io_class: int;
+}
+
+table CsChooseDiskStrategyCJFB 
+{
+  strategies: [CsChooseDiskStrategySingleCJFB];
+  disk_storage_type: int;
+  target_storage_type: int;
+}
+
+table ChunkOrStreamIdInfoFB
+{
+    uuid: UUIDInfoFB;
+    partition_index: uint;
+    padding: uint;
+}
+
+enum AdjustType : short{
+    LOWER = -1,
+    KEEP = 0,
+    HIGHER = 1
+}
+
+
+enum CacheGroupType : uint{
+    NO_CACHE = 0xFFFFFFFF,
+    DEFAULT = 0,
+    INTERNAL = 1,
+    USER_BASE = 100,
+    USER_0 = 101,
+    USER_1 = 102
+}
+
+table QosOptionsFB {
+  service_id: uint;
+  flow_id: uint;
+  adjust: int;
+  cache_groupid: uint = 0;
+  network_priority: int;
+}
+
+
+/**
+ * @brief flush chunk checksum
+ */
+
+
+table FlushChecksumFB
+{
+    category: uint;
+    value: long;
+}
+
+table UUIDInfoFB
+{
+    low: ulong;
+    high: ulong;
+}
+
+table RootServerIdFB
+{
+    uuid: UUIDInfoFB;
+    leader_term: long;
+}
+
+
+table ChunkIdTypeCJFB
+{
+    belonged_fileid: ulong;
+    chunk_index: uint;
+    padding: uint = 0;
+}
+
+table PanguTraceSpanInfoFB
+{
+    trace_id_low: ulong;
+    trace_id_high: ulong;
+    span_id: ulong; 
+}
+
+table CsChooseDiskStrategySingleCJFB
+{
+    method: uint;
+    weight: uint;
+    parameter: ulong = 0;
+}
+table FlatLogFileFlushChunkRequestFB{
+    chunk_id: ChunkIdTypeCJFB;
+    offset: uint;
+    length: uint;
+    storage_id: uint;
+    data: string;
+    hint: uint;
+    is_replication: bool=false;
+    trace_open: bool=false;
+    io_nice: IONiceFB;
+    open_chunkoptions: AccelerateOpenOptionsFB;
+    open_mode: int;
+    handle: long;
+    data_sync: bool=false;
+    trace_span: PanguTraceSpanInfoFB;
+    create_ifnotexists: bool;
+    strategy: CsChooseDiskStrategyCJFB;
+    chunk_id_v2: ChunkOrStreamIdInfoFB;
+    qos_options: QosOptionsFB;
+    checksum: FlushChecksumFB;
+    volume_uuid: UUIDInfoFB;
+    module_version: uint;
+    hostname: string;
+    disk_id: uint;
+    request_id: ulong;
+    user_id: string;
+    root_server_id: RootServerIdFB;
+    required_min_csversion: uint;
+    fromtype: int;
+    offset64: ulong;
+    record_size: uint;
+    pool_id: uint;
+    storage_pool_confversion: ulong;
+    a: int;
+}
+
+table FlatLogFileFlushChunkResponseFB
+{
+    errorcode: int;
+    chunk_status: uint = 0;
+    hint: uint;
+    ack_length: uint;
+    trace_type: uint;
+    trace_data: string;
+    handle: long;
+    storage_id: uint;
+    disk_id: uint;
+    request_id: ulong;
+    checksum: long;
+    left_replica_size: ulong;
+    a: int;
+}
+
+
+
+rpc_service Greeter {
+  SayHello(FlatLogFileFlushChunkRequestFB):FlatLogFileFlushChunkResponseFB;
+}

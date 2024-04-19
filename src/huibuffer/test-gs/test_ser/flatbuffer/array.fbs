@@ -1,0 +1,3 @@
+table msg{
+    data:[ubyte];
+}

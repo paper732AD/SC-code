@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+message test{
+  bytes a = 1;
+}
+
+
+
+/*
+struct test{
+    int a;
+    RPC::string b;
+    RPC::array<uint32_t> c;
+};
+*/

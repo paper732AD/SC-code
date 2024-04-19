@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+service geete {
+  rpc SayHelloAll (test) returns (test);
+}
+
+message test{
+  repeated bytes a = 1;
+}
+
+
+
+/*
+struct test{
+    int a;
+    RPC::string b;
+    RPC::array<uint32_t> c;
+};
+*/

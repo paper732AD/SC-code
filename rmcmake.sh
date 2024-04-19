@@ -1,0 +1,1 @@
+rm -rf cmake-build-debug  CMakeCache.txt  CMakeFiles  cmake_install.cmake  CPackConfig.cmake  CPackSourceConfig.cmake  CTestTestfile.cmake Makefile build

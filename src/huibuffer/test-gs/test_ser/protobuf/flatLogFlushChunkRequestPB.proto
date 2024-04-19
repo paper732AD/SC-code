@@ -1,0 +1,170 @@
+syntax = "proto2";
+
+message FixedUUIDInfoPB {
+    optional fixed64 low = 1;
+    optional fixed64 high = 2;
+}
+
+message MirrorArgsPB
+{
+    optional int32 Copy = 1;
+    optional int32 FTT = 2;
+}
+
+message ChunkOptionsPB
+{
+    optional int32 FTTType = 1;
+    optional MirrorArgsPB Mirror = 2;
+    optional bytes Placement = 3;
+}
+
+message ReplicaLocationPB
+{
+    optional bytes CSLocation = 1;
+    optional int32 diskLocation = 2;
+    optional uint32 diskType = 3;
+}
+
+message AccelerateOpenOptionsPB
+{
+    optional ChunkOptionsPB ChunkOptions = 1;
+    repeated ReplicaLocationPB ChunkLocation = 2;
+    optional uint32 chunkSizeExponent = 3;
+    optional uint32 checksumCategory = 4;
+}
+
+message IONicePB
+{
+    optional int32 Priority = 1;
+    optional int32 IOClass = 2;
+}
+
+message CsChooseDiskStrategyCJPB {
+    repeated CsChooseDiskStrategySingleCJPB Strategies = 1;
+    optional int32 DiskStorageType = 2;
+    optional int32 TargetStorageType = 3;
+}
+
+message ChunkOrStreamIdInfoPB {
+    optional UUIDInfoPB uuid = 1;
+    optional uint32 partition_index = 2;
+    optional uint32 padding = 3;
+}
+
+message QosOptionsPB
+{
+    enum AdjustType
+    {
+        KEEP        = 0;    // Use the same priority as the preset priority [0 in design]
+        LOWER       = -1;   // Try to use the lower priority than the preset priority [-1 in design]
+        HIGHER      = 1;    // Try to use the higher priority than the preset priority [+1 in design]
+    }
+
+    enum CacheGroupType
+    {
+        NO_CACHE    = -1;   // 0xffffffff in uint32
+        DEFAULT     = 0;
+        INTERNAL    = 1;
+        USER_BASE   = 100;  // should not use
+        USER_0      = 101;  // only USER_0 and USER_1 are supported
+        USER_1      = 102;
+    }
+
+    optional uint32         serviceId       = 1;    // Represents which service requests are from
+    optional uint32         flowId          = 2;    // Represents the purpose/class of requests in one sevice
+    optional int32          adjust          = 3;    // The adjust method for the preset priority value
+    optional uint32         cacheGroupId    = 4 [default = 0];    // Request data will be cached in the specified group
+    optional int32          networkPriority = 5;    // Qos parameter : rpc network priority
+}
+
+/**
+ * @brief flush chunk checksum
+ */
+message FlushChecksumPB
+{
+    optional uint32 category = 1;
+    optional int64 value = 2;
+}
+
+message UUIDInfoPB {
+    optional uint64 low = 1;
+    optional uint64 high = 2;
+}
+
+message RootServerIdPB {
+    optional UUIDInfoPB uuid = 1;
+    optional int64 leader_term = 2;
+}
+
+
+message ChunkIdTypeCJPB {
+    optional uint64 BelongedFileId = 1;
+    optional uint32 ChunkIndex = 2;
+    optional uint32 Padding = 3 [default = 0];
+}
+
+message PanguTraceSpanInfo
+{
+    optional uint64 TraceIdLow = 1;
+    optional uint64 TraceIdHigh = 2;
+    optional uint64 SpanId = 3;
+}
+
+message CsChooseDiskStrategySingleCJPB {
+    optional uint32 Method = 1;
+    optional uint32 Weight = 2;
+    optional uint64 Parameter = 3 [default = 0];
+}
+
+message FlatLogFileFlushChunkRequestPB {
+    optional ChunkIdTypeCJPB ChunkId = 1;
+    optional uint32 Offset = 2;
+    optional uint32 Length = 3;
+    optional uint32 StorageId = 4;
+    optional bytes Data = 5;
+    optional uint32 Hint = 6;
+    optional bool IsReplication = 7 [default = false];
+    optional bool trace_open = 8 [default = false];
+    optional IONicePB IONice = 9;
+    optional AccelerateOpenOptionsPB OpenChunkOptions = 10;
+    optional int32 OpenMode = 11;
+    optional int64 Handle = 12;
+    optional bool DataSync = 13 [default = true];
+    optional PanguTraceSpanInfo trace_span = 14;
+    optional bool CreateIfNotExists = 15;
+    optional CsChooseDiskStrategyCJPB Strategy = 16;
+    optional ChunkOrStreamIdInfoPB ChunkIdV2 = 17;
+    optional QosOptionsPB qosOptions = 18;
+    optional FlushChecksumPB Checksum = 19;
+    optional UUIDInfoPB volumeUUID = 20;
+    optional uint32 ModuleVersion = 21;
+    optional bytes HostName = 22;
+    optional uint32 DiskId = 23;
+    optional uint64 RequestId = 24;
+    optional bytes UserId = 25;
+    optional RootServerIdPB root_server_id = 26;
+    optional uint32 RequiredMinCSVersion = 27;
+    optional int32 FromType = 28;
+    optional uint64 Offset64 = 29;
+    optional uint32 RecordSize = 30;
+    optional uint32 PoolId = 31;
+    optional uint64 StoragePoolConfVersion = 32;
+    optional int32 a = 33;
+}
+
+message FlatLogFileFlushChunkResponsePB {
+    optional int32 Errorcode = 1;
+    optional uint32 ChunkStatus = 2 [default = 0];
+    optional uint32 Hint = 3;
+    optional uint32 AckLength = 4;
+    optional uint32 trace_type = 5;
+    optional bytes trace_data = 6;
+    optional int64 Handle = 7;
+    optional uint32 StorageId = 8;
+    optional uint32 DiskId = 9;
+    optional uint64 RequestId = 10;
+    optional int64 Checksum = 11;
+    optional uint64 LeftReplicaSize = 12;
+    optional int32 a = 13;
+}
+
